@@ -242,10 +242,14 @@ class OpenOCDManager:
         Args:
             firmware_path: Path to firmware file
             address: Optional memory address to program at (hex string or int)
+
+        Raises:
+            FileNotFoundError: If firmware file does not exist
         """
         if not os.path.exists(firmware_path):
-            print(error(f"Error: Firmware file '{firmware_path}' not found"))
-            return None
+            error_msg = f"Firmware file '{firmware_path}' not found"
+            print(error(f"Error: {error_msg}"))
+            raise FileNotFoundError(error_msg)
 
         # Build flash command
         if address is not None:
@@ -273,10 +277,14 @@ class OpenOCDManager:
         Args:
             firmware_path: Path to firmware file
             address: Optional memory address offset for verification (hex string or int)
+
+        Raises:
+            FileNotFoundError: If firmware file does not exist
         """
         if not os.path.exists(firmware_path):
-            print(error(f"Error: Firmware file '{firmware_path}' not found"))
-            return None
+            error_msg = f"Firmware file '{firmware_path}' not found"
+            print(error(f"Error: {error_msg}"))
+            raise FileNotFoundError(error_msg)
 
         # Build verify command
         if address is not None:

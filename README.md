@@ -1,6 +1,6 @@
 # OpenOCD Python Flasher
 
-Version: 0.007
+Version: 0.008
 
 A modular Python application for managing OpenOCD connections and performing common embedded development operations on STM32 microcontrollers. Supports both interactive mode and automated scripting via configuration files.
 
@@ -26,7 +26,11 @@ A modular Python application for managing OpenOCD connections and performing com
 - Automatic OpenOCD process management
 - Telnet connection to OpenOCD
 - Support for 15 STM32 MCU families
-- Automatic command retry with halt checking (up to 3 attempts)
+- **Robust error handling:**
+  - Automatic command retry with halt checking (up to 3 attempts)
+  - File existence validation before flash/verify operations
+  - Proper exception handling with clear error messages
+  - Automatic flash erase on failure in automated mode to prevent bricked devices
 - Color-coded terminal output for better readability:
   - Green for success messages
   - Red for errors
@@ -232,11 +236,17 @@ The script provides robust error handling for operations that require the MCU to
 
 **Automated Mode Error Handling:**
 - When a command fails in automated mode (config file), the script:
-  1. Skips all remaining commands in the sequence
-  2. Performs a flash erase to ensure the device is in a clean state
-  3. Displays "Task Failed" to clearly indicate the failure
-  4. Exits with return code 1 for CI/CD integration
+1. Skips all remaining commands in the sequence
+2. Performs a flash erase to ensure the device is in a clean state
+3. Displays "Task Failed" to clearly indicate the failure
+4. Exits with return code 1 for CI/CD integration
 - This safety mechanism prevents partially-programmed devices that could fail to boot
+
+**File Validation:**
+- Flash and verify operations now include automatic file existence checking
+- If a firmware file is not found, the operation immediately fails with a clear error message
+- Proper exception handling (`FileNotFoundError`) ensures errors are caught early before attempting communication with the device
+- Helps prevent wasted time on operations that cannot succeed due to missing files
 
 ## Example Workflows
 
@@ -342,9 +352,10 @@ fi
 
 ### Flash/Programming errors
 
-- Ensure the MCU is halted before flashing
-- Check that the firmware file path is correct
+- Ensure the MCU is halted before flashing (the script will attempt this automatically)
+- Check that the firmware file path is correct - the script will now report "Firmware file 'filename' not found" if the file doesn't exist
 - Verify the firmware is compatible with your target
+- Ensure the file path is correct relative to where you're running the script from
 
 ## License
 

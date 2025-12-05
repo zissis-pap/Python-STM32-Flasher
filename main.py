@@ -11,7 +11,7 @@ from ui import select_target, run_interactive_loop
 from colors import header, error, success, info
 from config_parser import ConfigParser
 
-VERSION = "0.007"
+VERSION = "0.008"
 
 
 def execute_config_commands(manager, commands):
