@@ -150,7 +150,6 @@ class OpenOCDManager:
         # Common OpenOCD failure indicators
         failure_patterns = [
             "failed",
-            "Failed"
             "error",
             "target not halted",
             "cannot",
@@ -170,9 +169,14 @@ class OpenOCDManager:
             command: The OpenOCD command to send
             max_retries: Maximum number of retry attempts (default: 3)
             check_halt: Whether to check and ensure MCU is halted before retry (default: True)
+
+        Raises:
+            RuntimeError: If command fails after all retry attempts
         """
+        last_response = None
         for attempt in range(max_retries):
             response = self._send_command_raw(command)
+            last_response = response
 
             # Check if command succeeded
             if not self._is_command_failed(response):
@@ -181,6 +185,8 @@ class OpenOCDManager:
             # Command failed
             if attempt < max_retries - 1:  # Don't retry on last attempt
                 print(warning(f"Command failed, retrying ({attempt + 2}/{max_retries})..."))
+                if response:
+                    print(warning(f"OpenOCD response: {response}"))
 
                 # Check if MCU is halted before retrying (except for halt/reset commands)
                 if check_halt and command not in ["halt", "reset halt", "reset run"]:
@@ -188,7 +194,11 @@ class OpenOCDManager:
 
                 time.sleep(0.5)  # Brief delay before retry
             else:
-                print(error(f"Command failed after {max_retries} attempts"))
+                error_msg = f"Command '{command}' failed after {max_retries} attempts"
+                if last_response:
+                    error_msg += f"\nLast OpenOCD response: {last_response}"
+                print(error(error_msg))
+                raise RuntimeError(error_msg)
 
         return response
 

@@ -1,6 +1,6 @@
 # OpenOCD Python Flasher
 
-Version: 0.006
+Version: 0.007
 
 A modular Python application for managing OpenOCD connections and performing common embedded development operations on STM32 microcontrollers. Supports both interactive mode and automated scripting via configuration files.
 
@@ -229,6 +229,14 @@ The script provides robust error handling for operations that require the MCU to
 - Before each retry, the script checks if the MCU is halted and halts it if needed
 - Detects OpenOCD failure patterns like "failed", "error", "target not halted", "unable to", etc.
 - This improves reliability when working with unstable connections or busy targets
+
+**Automated Mode Error Handling:**
+- When a command fails in automated mode (config file), the script:
+  1. Skips all remaining commands in the sequence
+  2. Performs a flash erase to ensure the device is in a clean state
+  3. Displays "Task Failed" to clearly indicate the failure
+  4. Exits with return code 1 for CI/CD integration
+- This safety mechanism prevents partially-programmed devices that could fail to boot
 
 ## Example Workflows
 

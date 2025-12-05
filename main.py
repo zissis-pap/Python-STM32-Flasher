@@ -11,7 +11,7 @@ from ui import select_target, run_interactive_loop
 from colors import header, error, success, info
 from config_parser import ConfigParser
 
-VERSION = "0.006"
+VERSION = "0.007"
 
 
 def execute_config_commands(manager, commands):
@@ -25,6 +25,9 @@ def execute_config_commands(manager, commands):
         int: 0 on success, 1 on failure
     """
     print(info(f"\nExecuting {len(commands)} commands from config file...\n"))
+
+    failed = False
+    error_message = None
 
     for i, cmd in enumerate(commands, 1):
         cmd_type = cmd['type']
@@ -83,8 +86,10 @@ def execute_config_commands(manager, commands):
                     count = int(count_str) if count_str else 1
                     manager.read_memory(address, count)
                 else:
-                    print(error(f"Invalid read_memory parameters"))
-                    return 1
+                    error_message = "Invalid read_memory parameters"
+                    print(error(error_message))
+                    failed = True
+                    break
 
             elif cmd_type == 'write_memory':
                 address_str = cmd.get('address')
@@ -94,21 +99,41 @@ def execute_config_commands(manager, commands):
                     value = int(value_str, 16) if value_str.startswith('0x') else int(value_str, 16)
                     manager.write_memory(address, value)
                 else:
-                    print(error(f"Invalid write_memory parameters"))
-                    return 1
+                    error_message = "Invalid write_memory parameters"
+                    print(error(error_message))
+                    failed = True
+                    break
 
             elif cmd_type == 'custom':
                 manager.custom_command(cmd.get('param'))
 
             else:
-                print(error(f"Unknown command type: {cmd_type}"))
-                return 1
+                error_message = f"Unknown command type: {cmd_type}"
+                print(error(error_message))
+                failed = True
+                break
 
         except Exception as e:
-            print(error(f"Error executing command: {e}"))
-            return 1
+            error_message = f"Error executing command: {e}"
+            print(error(error_message))
+            failed = True
+            break
 
         print()  # Add blank line between commands
+
+    # If any command failed, perform flash erase
+    if failed:
+        remaining = len(commands) - i
+        if remaining > 0:
+            print(error(f"\nSkipping {remaining} remaining command(s) due to failure"))
+        print(error("\nPerforming flash erase due to command failure..."))
+        try:
+            manager.erase_flash()
+            print(success("Flash erase completed"))
+        except Exception as erase_error:
+            print(error(f"Flash erase failed: {erase_error}"))
+        print(error("\nTask Failed"))
+        return 1
 
     print(success("All commands executed successfully!"))
     return 0
