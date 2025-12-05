@@ -6,7 +6,7 @@ import time
 import sys
 import os
 
-VERSION = "0.001"
+VERSION = "0.002"
 
 
 class OpenOCDManager:
@@ -271,16 +271,50 @@ def main():
     port = 4444
 
     # Ask for target configuration
-    print("\nSelect target:")
-    print("1. L0 (target/stm32l0.cfg)")
-    print("2. L4 (target/stm32l4x.cfg)")
-    target_choice = input("Enter your choice (1 or 2): ").strip()
+    print("\nSelect STM32 target:")
+    print("F Series:")
+    print("  1.  STM32F0 (target/stm32f0x.cfg)")
+    print("  2.  STM32F1 (target/stm32f1x.cfg)")
+    print("  3.  STM32F2 (target/stm32f2x.cfg)")
+    print("  4.  STM32F3 (target/stm32f3x.cfg)")
+    print("  5.  STM32F4 (target/stm32f4x.cfg)")
+    print("  6.  STM32F7 (target/stm32f7x.cfg)")
+    print("G Series:")
+    print("  7.  STM32G0 (target/stm32g0x.cfg)")
+    print("  8.  STM32G4 (target/stm32g4x.cfg)")
+    print("H Series:")
+    print("  9.  STM32H7 (target/stm32h7x.cfg)")
+    print("L Series:")
+    print("  10. STM32L0 (target/stm32l0.cfg)")
+    print("  11. STM32L1 (target/stm32l1.cfg)")
+    print("  12. STM32L4 (target/stm32l4x.cfg)")
+    print("  13. STM32L5 (target/stm32l5x.cfg)")
+    print("Wireless Series:")
+    print("  14. STM32WB (target/stm32wbx.cfg)")
+    print("  15. STM32WL (target/stm32wlx.cfg)")
 
-    if target_choice == "1":
-        target_cfg = "target/stm32l0.cfg"
-        print(f"Selected: {target_cfg}")
-    elif target_choice == "2":
-        target_cfg = "target/stm32l4x.cfg"
+    target_choice = input("\nEnter your choice (1-15): ").strip()
+
+    targets = {
+        "1": "target/stm32f0x.cfg",
+        "2": "target/stm32f1x.cfg",
+        "3": "target/stm32f2x.cfg",
+        "4": "target/stm32f3x.cfg",
+        "5": "target/stm32f4x.cfg",
+        "6": "target/stm32f7x.cfg",
+        "7": "target/stm32g0x.cfg",
+        "8": "target/stm32g4x.cfg",
+        "9": "target/stm32h7x.cfg",
+        "10": "target/stm32l0.cfg",
+        "11": "target/stm32l1.cfg",
+        "12": "target/stm32l4x.cfg",
+        "13": "target/stm32l5x.cfg",
+        "14": "target/stm32wbx.cfg",
+        "15": "target/stm32wlx.cfg"
+    }
+
+    if target_choice in targets:
+        target_cfg = targets[target_choice]
         print(f"Selected: {target_cfg}")
     else:
         print("Error: Invalid target selection")

@@ -48,8 +48,20 @@ A Python script for managing OpenOCD connections and performing common embedded 
 
 The script is pre-configured for ST-Link debug probe and supports the following STM32 targets:
 
-- **STM32L0** series (target/stm32l0.cfg)
-- **STM32L4** series (target/stm32l4x.cfg)
+**F Series:**
+- STM32F0, F1, F2, F3, F4, F7
+
+**G Series:**
+- STM32G0, G4
+
+**H Series:**
+- STM32H7
+
+**L Series:**
+- STM32L0, L1, L4, L5
+
+**Wireless Series:**
+- STM32WB, WL
 
 No additional configuration files are needed. Simply select your target when prompted during script startup.
 
@@ -65,12 +77,16 @@ Or:
 ./main.py
 ```
 
-You'll be prompted to select your target:
+You'll be prompted to select your STM32 target from 15 supported families:
 ```
-Select target:
-1. L0 (target/stm32l0.cfg)
-2. L4 (target/stm32l4x.cfg)
-Enter your choice (1 or 2):
+Select STM32 target:
+F Series:
+  1.  STM32F0 (target/stm32f0x.cfg)
+  2.  STM32F1 (target/stm32f1x.cfg)
+  ...
+  (15 options total)
+
+Enter your choice (1-15):
 ```
 
 After selecting your target, you'll see an interactive menu with the following options:
@@ -93,7 +109,7 @@ After selecting your target, you'll see an interactive menu with the following o
 ### Flashing Firmware
 
 1. Start the script: `python3 main.py`
-2. Select target: `1` (for L0) or `2` (for L4)
+2. Select target: Enter `1-15` based on your STM32 family (e.g., `5` for STM32F4, `10` for STM32L0)
 3. Select option `4` to erase flash
 4. Select option `5` to flash firmware
 5. Enter firmware path: `build/firmware.bin`
