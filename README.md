@@ -1,6 +1,8 @@
 # OpenOCD Python Flasher
 
-A Python script for managing OpenOCD connections and performing common embedded development operations.
+Version: 0.001
+
+A Python script for managing OpenOCD connections and performing common embedded development operations on STM32 microcontrollers.
 
 ## Features
 
@@ -44,23 +46,12 @@ A Python script for managing OpenOCD connections and performing common embedded 
 
 ## Configuration
 
-1. Create an OpenOCD configuration file for your target:
-   ```bash
-   cp openocd.cfg.example openocd.cfg
-   ```
+The script is pre-configured for ST-Link debug probe and supports the following STM32 targets:
 
-2. Edit `openocd.cfg` and uncomment the appropriate interface and target for your hardware.
+- **STM32L0** series (target/stm32l0.cfg)
+- **STM32L4** series (target/stm32l4x.cfg)
 
-   Common examples:
-   ```
-   # STM32F4 with ST-Link
-   source [find interface/stlink.cfg]
-   source [find target/stm32f4x.cfg]
-
-   # nRF52 with J-Link
-   source [find interface/jlink.cfg]
-   source [find target/nrf52.cfg]
-   ```
+No additional configuration files are needed. Simply select your target when prompted during script startup.
 
 ## Usage
 
@@ -74,11 +65,15 @@ Or:
 ./main.py
 ```
 
-You'll be prompted for:
-- OpenOCD config file path (press Enter to skip and use default)
-- Telnet port (default: 4444)
+You'll be prompted to select your target:
+```
+Select target:
+1. L0 (target/stm32l0.cfg)
+2. L4 (target/stm32l4x.cfg)
+Enter your choice (1 or 2):
+```
 
-Then you'll see an interactive menu with the following options:
+After selecting your target, you'll see an interactive menu with the following options:
 
 1. **Halt MCU** - Stop the microcontroller
 2. **Reset and Halt MCU** - Reset and immediately halt
@@ -98,7 +93,7 @@ Then you'll see an interactive menu with the following options:
 ### Flashing Firmware
 
 1. Start the script: `python3 main.py`
-2. Enter config file: `openocd.cfg`
+2. Select target: `1` (for L0) or `2` (for L4)
 3. Select option `4` to erase flash
 4. Select option `5` to flash firmware
 5. Enter firmware path: `build/firmware.bin`
@@ -122,8 +117,8 @@ Then you'll see an interactive menu with the following options:
 ### OpenOCD fails to start
 
 - Check that OpenOCD is installed: `openocd --version`
-- Verify your config file syntax
-- Ensure your debug probe is connected
+- Ensure your ST-Link debug probe is connected
+- Verify you selected the correct target for your MCU
 
 ### Cannot connect via telnet
 
@@ -145,4 +140,4 @@ This script uses `telnetlib` which is deprecated in Python 3.11+ and removed in 
 
 ## License
 
-MIT
+GPL-3.0

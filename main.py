@@ -6,6 +6,8 @@ import time
 import sys
 import os
 
+VERSION = "0.001"
+
 
 class OpenOCDManager:
     def __init__(self, interface_cfg=None, target_cfg=None, port=4444):
@@ -254,7 +256,7 @@ def print_menu():
 
 
 def main():
-    print("OpenOCD Manager")
+    print(f"OpenOCD Manager v{VERSION}")
     print("="*50)
 
     # Configuration
@@ -269,9 +271,19 @@ def main():
     port = 4444
 
     # Ask for target configuration
-    target_cfg = input("Enter target config (e.g., target/stm32l4x.cfg or target/stm32l0.cfg): ").strip()
-    if not target_cfg:
-        print("Error: Target configuration is required")
+    print("\nSelect target:")
+    print("1. L0 (target/stm32l0.cfg)")
+    print("2. L4 (target/stm32l4x.cfg)")
+    target_choice = input("Enter your choice (1 or 2): ").strip()
+
+    if target_choice == "1":
+        target_cfg = "target/stm32l0.cfg"
+        print(f"Selected: {target_cfg}")
+    elif target_choice == "2":
+        target_cfg = "target/stm32l4x.cfg"
+        print(f"Selected: {target_cfg}")
+    else:
+        print("Error: Invalid target selection")
         return 1
 
     # Initialize manager
